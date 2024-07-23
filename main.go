@@ -21,14 +21,14 @@ var FirstName, SecondName, Search string
 var Id, Age, Num int
 
 func LookListUser() {
-	db, err := sql.Open("sqlite", "file:mydb.TestDBUsers.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
 	}
 	defer db.Close()
 
-	fmt.Println("Your look all list users:")
+	fmt.Println("************************  Objects list  ****************************")
 	fmt.Println()
 
 	rows, err := db.Query("SELECT * FROM users", FirstName, SecondName, Age)
@@ -46,7 +46,7 @@ func LookListUser() {
 			return
 		}
 		// fmt.Println("-----------------------------------------------------------------------")
-		fmt.Printf("User: %s %s, AGE = %d, ID = %d\n", u.FirstName, u.SecondName, u.Age, u.Id)
+		fmt.Printf("User: %s %s, %d year(s), ID: %d\n", u.FirstName, u.SecondName, u.Age, u.Id)
 		fmt.Println("-----------------------------------------------------------------------")
 	}
 	fmt.Println()
@@ -63,7 +63,7 @@ func LookListUser() {
 }
 
 func AddUser() {
-	db, err := sql.Open("sqlite", "file:mydb.TestDBUsers.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -102,7 +102,7 @@ func AddUser() {
 }
 
 func SearchUser() {
-	db, err := sql.Open("sqlite", "file:mydb.TestDBUsers.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -163,7 +163,7 @@ func SearchUser() {
 }
 
 func ChangeUser() {
-	db, err := sql.Open("sqlite", "file:mydb.TestDBUsers.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -174,6 +174,8 @@ func ChangeUser() {
 	time.Sleep(1 * time.Second)
 
 	fmt.Println("Select id user:")
+	fmt.Println()
+	fmt.Println(">>  ")
 	fmt.Scan(&Id)
 
 	fmt.Println("Enter name: ")
@@ -214,7 +216,7 @@ func DeleteUser() {
 	fmt.Println()
 	fmt.Print(">>  ")
 
-	db, err := sql.Open("sqlite", "file:mydb.TestDBUsers.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -247,11 +249,11 @@ func DeleteUser() {
 }
 
 func Menu() {
-	fmt.Println("1. Look list users")
-	fmt.Println("2. Add user")
-	fmt.Println("3. Search user")
-	fmt.Println("4. Delete user")
-	fmt.Println("5. Change user")
+	fmt.Println("1. Look objects list")
+	fmt.Println("2. Add objects")
+	fmt.Println("3. Search objects")
+	fmt.Println("4. Delete objects")
+	fmt.Println("5. Change objects")
 	fmt.Println("6. Exit app")
 	fmt.Println()
 	fmt.Print(">>  ")
@@ -272,12 +274,12 @@ func Menu() {
 	case Num == 6:
 		fmt.Println("Exit app!!!")
 		fmt.Println()
-		time.Sleep(2 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 }
 
 func main() {
-	db, err := sql.Open("sqlite", "file:mydb.TestDBUsers.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -291,11 +293,11 @@ func main() {
 			)`,
 	)
 
-	fmt.Println("Welcome to app Users!")
+	fmt.Println("*************************  Welcome to app  *****************************")
 	fmt.Println()
 	time.Sleep(1 * time.Second)
 
-	fmt.Println("Select item from menu: ")
+	fmt.Println("********************** Select item from menu  **************************")
 	fmt.Println()
 	time.Sleep(1 * time.Second)
 
