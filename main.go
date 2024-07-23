@@ -15,13 +15,14 @@ type Users struct {
 	FirstName  string `json:"first_name"`
 	SecondName string `json:"second_name"`
 	Age        int    `json:"age"`
+	Date       time.Time
 }
 
 var FirstName, SecondName, Search string
 var Id, Age, Num int
 
 func LookListUser() {
-	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "DB.test.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -40,13 +41,12 @@ func LookListUser() {
 
 	for rows.Next() {
 		var u Users
-		err = rows.Scan(&u.Id, &u.FirstName, &u.SecondName, &u.Age)
+		err = rows.Scan(&u.Id, &u.FirstName, &u.SecondName, &u.Age, &u.Date)
 		if err != nil {
 			fmt.Println("Error scanning row:", err)
 			return
 		}
-		// fmt.Println("-----------------------------------------------------------------------")
-		fmt.Printf("User: %s %s, %d year(s), ID: %d\n", u.FirstName, u.SecondName, u.Age, u.Id)
+		fmt.Printf("User: %s %s, %d year(s), ID: %d; Date created: %s\n", u.FirstName, u.SecondName, u.Age, u.Id, u.Date)
 		fmt.Println("-----------------------------------------------------------------------")
 	}
 	fmt.Println()
@@ -63,7 +63,7 @@ func LookListUser() {
 }
 
 func AddUser() {
-	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "DB.test.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -81,11 +81,13 @@ func AddUser() {
 	fmt.Println("Enter age: ")
 	fmt.Print(">>  ")
 	fmt.Scan(&Age)
+	fmt.Println()
 
-	_, err = db.Exec("INSERT INTO users (Firstname, Secondname, Age) VALUES (?,?,?)", FirstName, SecondName, Age)
+	_, err = db.Exec("INSERT INTO users (Firstname, Secondname, Age, Date) VALUES (?,?,?,(datetime('now','localtime')))", FirstName, SecondName, Age)
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Println()
 	fmt.Println("User added successfully!")
 	fmt.Println()
 	fmt.Println("Press key 1 and enter for return to the main menu!")
@@ -102,7 +104,7 @@ func AddUser() {
 }
 
 func SearchUser() {
-	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "DB.test.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -121,7 +123,7 @@ func SearchUser() {
 		fmt.Print(">>  ")
 		fmt.Scanln(&SecondName)
 	}
-
+	// поиск объекта в базе данных sqlite по первым четырем символам
 	query := "SELECT Id, FirstName, SecondName, Age FROM users WHERE SecondName LIKE ?"
 	rows, err := db.Query(query, SecondName+"%")
 	if err != nil {
@@ -163,7 +165,7 @@ func SearchUser() {
 }
 
 func ChangeUser() {
-	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "DB.test.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -216,7 +218,7 @@ func DeleteUser() {
 	fmt.Println()
 	fmt.Print(">>  ")
 
-	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "DB.test.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
 		return
@@ -279,7 +281,7 @@ func Menu() {
 }
 
 func main() {
-	db, err := sql.Open("sqlite", "file:mydb.DBTest.sqlite -- DO NOT DELETE!!!")
+	db, err := sql.Open("sqlite", "DB.test.sqlite -- DO NOT DELETE!!!")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -289,7 +291,8 @@ func main() {
 		Id INTEGER PRIMARY KEY AUTOINCREMENT,
 		FirstName TEXT NOT NULL,
 		SecondName TEXT NOT NULL,
-		Age INTEGER NOT NULL
+		Age INTEGER NOT NULL,
+		Date TIMESTAMP
 			)`,
 	)
 
