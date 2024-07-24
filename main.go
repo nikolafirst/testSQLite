@@ -103,7 +103,6 @@ func AddUser() {
 		fmt.Println()
 		if Confirm == "y" {
 			time.Sleep(1 * time.Second)
-			// fmt.Println()
 			AddUser()
 			break
 		} else if Confirm == "n" {
@@ -174,16 +173,31 @@ func SearchUser() {
 		fmt.Println()
 	}
 
-	fmt.Println("For return to the main menu press 'y' and enter")
+	fmt.Println("Search again? press 'y' and enter, or 'n' exit to main menu")
 	fmt.Println()
 	fmt.Print(">>  ")
 
-	for fmt.Scan(&Confirm); Confirm != "y"; fmt.Scan(&Confirm) {
-		fmt.Println("Incorret enter!!!")
-		fmt.Print(">>  ")
+	for {
+		fmt.Scan(&Confirm)
+		fmt.Println()
+		if Confirm == "y" {
+			time.Sleep(1 * time.Second)
+			SearchUser()
+			break
+		} else if Confirm == "n" {
+			fmt.Println("Return to the main menu")
+			fmt.Println()
+			time.Sleep(1 * time.Second)
+			Menu()
+			break
+		} else {
+			fmt.Println("Incorret enter!!!")
+			fmt.Println()
+			fmt.Println("Select 'y' or 'n' and press enter")
+			fmt.Println()
+			fmt.Print(">>  ")
+		}
 	}
-	fmt.Println()
-	Menu()
 }
 
 func ChangeUser() {
