@@ -2,9 +2,10 @@ package main
 
 import (
 	// "context"
-	"context"
+
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -18,13 +19,15 @@ type Users struct {
 	Date       time.Time
 }
 
-var FirstName, SecondName, Confirm string
+var (
+	FirstName, SecondName, Confirm string
 
-var Id, Age, Num int
+	Id, Age, Num int
 
-var search = []Users{} // not removed
+	search []Users // not removed
+)
 
-func LookListUser() {
+func lookListUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
@@ -65,7 +68,7 @@ func LookListUser() {
 	Menu()
 }
 
-func AddUser() {
+func addUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
@@ -103,7 +106,7 @@ func AddUser() {
 		fmt.Println()
 		if Confirm == "y" {
 			time.Sleep(1 * time.Second)
-			AddUser()
+			addUser()
 			break
 		} else if Confirm == "n" {
 			fmt.Println("Return to the main menu")
@@ -121,7 +124,7 @@ func AddUser() {
 	}
 }
 
-func SearchUser() {
+func searchUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
@@ -169,7 +172,7 @@ func SearchUser() {
 
 	if !found {
 		fmt.Println()
-		fmt.Println("No users found with the last name:", SecondName)
+		fmt.Println("No users found with the last name: ", SecondName)
 		fmt.Println()
 	}
 
@@ -177,12 +180,13 @@ func SearchUser() {
 	fmt.Println()
 	fmt.Print(">>  ")
 
+	// ConfirmInput()
 	for {
 		fmt.Scan(&Confirm)
 		fmt.Println()
 		if Confirm == "y" {
 			time.Sleep(1 * time.Second)
-			SearchUser()
+			searchUser()
 			break
 		} else if Confirm == "n" {
 			fmt.Println("Return to the main menu")
@@ -200,7 +204,7 @@ func SearchUser() {
 	}
 }
 
-func ChangeUser() {
+func changeUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
 		fmt.Println("Error opening database:", err)
@@ -247,73 +251,15 @@ func ChangeUser() {
 	Menu()
 }
 
-func DeleteUser() {
-	// var confirm string
-	fmt.Println("Your have remove user?(confirm action Y/N)")
-	fmt.Println()
-	fmt.Print(">>  ")
-	fmt.Scan(&Confirm)
-
-	if Confirm == "y" {
-		fmt.Println("Select id user:")
-		fmt.Println()
-		fmt.Print(">>  ")
-
-		db, err := sql.Open("sqlite", "DB.test.sqlite")
-		if err != nil {
-			fmt.Println("Error opening database:", err)
-			return
-		}
-		defer db.Close()
-
-		fmt.Scan(&Id)
-		fmt.Println()
-
-		_, err = db.Exec("DELETE FROM users WHERE Id = ?", Id)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Printf("User with Id: %d, removed!\n", Id)
-		time.Sleep(1 * time.Second)
-		fmt.Println()
-		fmt.Println("Press key 1 and enter for return to the main menu!")
-		time.Sleep(1 * time.Second)
-		fmt.Println()
-
-		fmt.Print(">>  ")
-
-		for fmt.Scan(&Num); Num != 1; fmt.Scan(&Num) {
-			fmt.Println("Incorret number!!!")
-			fmt.Print(">>  ")
-		}
-		time.Sleep(1 * time.Second)
-		fmt.Println()
-		Menu()
-	} else if Confirm == "n" {
-		fmt.Println()
-		fmt.Println("Return to the main menu")
-		fmt.Println()
-		time.Sleep(1 * time.Second)
-		Menu()
-	} else {
-		fmt.Println()
-		fmt.Println("Incorret symbol!!!")
-		time.Sleep(1 * time.Second)
-		fmt.Println()
-		fmt.Println("Return to the main menu")
-		fmt.Println()
-		time.Sleep(1 * time.Second)
-		Menu()
-	}
-}
+// func removeUser() {}  -- в разработке
 
 func Menu() {
 	fmt.Println("1. Look users list")
 	fmt.Println("2. Add user")
 	fmt.Println("3. Search user")
-	fmt.Println("4. Delete user")
-	fmt.Println("5. Change user")
-	fmt.Println("6. Exit app")
+	fmt.Println("4. Change user")
+	// fmt.Println(" . Remove user") -- в разработке
+	fmt.Println("5. Exit app")
 	fmt.Println()
 	fmt.Print(">>  ")
 	fmt.Scan(&Num)
@@ -321,29 +267,16 @@ func Menu() {
 
 	switch {
 	case Num == 1:
-		LookListUser()
+		lookListUser()
 	case Num == 2:
-		AddUser()
+		addUser()
 	case Num == 3:
-		SearchUser()
+		searchUser()
 	case Num == 4:
-		DeleteUser()
+		changeUser()
 	case Num == 5:
-		ChangeUser()
-	case Num == 6:
-		fmt.Println()
-		fmt.Println("Exit app?? Press 'y' and enter")
-		fmt.Println()
-		fmt.Print(">>  ")
-
-		for fmt.Scan(&Confirm); Confirm != "y"; fmt.Scan(&Confirm) {
-			fmt.Println("Incorret enter!!!")
-			fmt.Print(">>  ")
-		}
-		fmt.Println()
-		fmt.Println("Exit app!!!")
-		fmt.Println()
 		time.Sleep(1 * time.Second)
+		fmt.Println("Exit app!!!")
 	}
 }
 
@@ -354,14 +287,19 @@ func main() {
 	}
 	defer db.Close()
 
-	_, err = db.ExecContext(context.Background(), `CREATE TABLE IF NOT EXISTS users(
+	createTableSQL := `CREATE TABLE IF NOT EXISTS users(
 		Id INTEGER PRIMARY KEY AUTOINCREMENT,
 		FirstName TEXT NOT NULL,
 		SecondName TEXT NOT NULL,
 		Age INTEGER NOT NULL,
 		Date TIMESTAMP
-			)`,
-	)
+		)`
+
+	if _, err := db.Exec(createTableSQL); err != nil {
+		log.Fatalf("Ошибка при создании таблицыЖ %v", err)
+	}
+
+	fmt.Println("Таблица 'users' успешно создана или уже существует")
 
 	fmt.Println("*************************  Welcome to app  *****************************")
 	fmt.Println()
