@@ -195,7 +195,7 @@ func searchUser() {
 			Menu()
 			break
 		} else {
-			fmt.Println("Incorret enter!!!")
+			fmt.Println("Incorrect enter!!!")
 			fmt.Println()
 			fmt.Println("Select 'y' or 'n' and press enter")
 			fmt.Println()
@@ -214,6 +214,7 @@ func changeUser() {
 
 	fmt.Println("Your have change user")
 	time.Sleep(1 * time.Second)
+	fmt.Println()
 
 	fmt.Println("Select id user:")
 	fmt.Println()
@@ -237,29 +238,70 @@ func changeUser() {
 
 	fmt.Println("User changed successfully!")
 	fmt.Println()
-	fmt.Println("Press key 1 and enter for return to the main menu!")
+	fmt.Println("For return to the main menu press 'y' and enter")
 	fmt.Println()
-
 	fmt.Print(">>  ")
 
-	for fmt.Scan(&Num); Num != 1; fmt.Scan(&Num) {
-		fmt.Println("Incorret number!!!")
+	for fmt.Scan(&Confirm); Confirm != "y"; fmt.Scan(&Confirm) {
+		fmt.Println("Incorrect enter!!!")
 		fmt.Print(">>  ")
 	}
-	time.Sleep(1 * time.Second)
 	fmt.Println()
 	Menu()
 }
 
-// func removeUser() {}  -- в разработке
+func removeUser() {
+	db, err := sql.Open("sqlite", "DB.test.sqlite")
+	if err != nil {
+		fmt.Println("Error opening database:", err)
+		return
+	}
+	defer db.Close()
+
+	fmt.Println("Your have remove user")
+	time.Sleep(1 * time.Second)
+	fmt.Println()
+
+	fmt.Println("Select id user:")
+	fmt.Println()
+	fmt.Print(">>  ")
+	fmt.Scan(&Id)
+
+	result, err := db.Exec("DELETE FROM users WHERE Id=?", Id)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if rowsAffected == 0 {
+		fmt.Println("User with this ID not found")
+	}
+
+	fmt.Println("User sucesfully remove!")
+	fmt.Println()
+	fmt.Println("For return to the main menu press 'y' and enter")
+	fmt.Println()
+	fmt.Print(">>  ")
+
+	for fmt.Scan(&Confirm); Confirm != "y"; fmt.Scan(&Confirm) {
+		fmt.Println("Incorrect enter!!!")
+		fmt.Print(">>  ")
+	}
+	fmt.Println()
+	Menu()
+}
 
 func Menu() {
 	fmt.Println("1. Look users list")
 	fmt.Println("2. Add user")
 	fmt.Println("3. Search user")
 	fmt.Println("4. Change user")
-	// fmt.Println(" . Remove user") -- в разработке
-	fmt.Println("5. Exit app")
+	fmt.Println("5. Remove user")
+	fmt.Println("6. Exit app")
 	fmt.Println()
 	fmt.Print(">>  ")
 	fmt.Scan(&Num)
@@ -275,8 +317,11 @@ func Menu() {
 	case Num == 4:
 		changeUser()
 	case Num == 5:
+		removeUser()
+	case Num == 6:
 		time.Sleep(1 * time.Second)
 		fmt.Println("Exit app!!!")
+		fmt.Println()
 	}
 }
 
@@ -296,7 +341,7 @@ func main() {
 		)`
 
 	if _, err := db.Exec(createTableSQL); err != nil {
-		log.Fatalf("Ошибка при создании таблицыЖ %v", err)
+		log.Fatalf("Ошибка при создании таблицы: %v", err)
 	}
 
 	fmt.Println("Таблица 'users' успешно создана или уже существует")
