@@ -24,18 +24,18 @@ var (
 
 	Id, Age, Num int
 
-	search []Users // not removed
+	search []Users // не удалять
 )
 
 func lookListUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
-		fmt.Println("Error opening database:", err)
+		fmt.Println("Ошибка открытия базы данных:", err)
 		return
 	}
 	defer db.Close()
 
-	fmt.Println("************************  Users list  ****************************")
+	fmt.Println("************************  Список пользователей  ****************************")
 	fmt.Println()
 
 	rows, err := db.Query("SELECT * FROM users", FirstName, SecondName, Age)
@@ -49,19 +49,19 @@ func lookListUser() {
 		var u Users
 		err = rows.Scan(&u.Id, &u.FirstName, &u.SecondName, &u.Age, &u.Date)
 		if err != nil {
-			fmt.Println("Error scanning row:", err)
+			fmt.Println("Ошибка сканирования базы данных:", err)
 			return
 		}
 		fmt.Printf("User: %s %s, %d year(s), ID: %d; Date created: %s\n", u.FirstName, u.SecondName, u.Age, u.Id, u.Date)
 		fmt.Println("-----------------------------------------------------------------------")
 	}
 	fmt.Println()
-	fmt.Println("For return to the main menu press 'y' and enter")
+	fmt.Println("Для возврата в главное меню нажмите" + "у" + "enter")
 	fmt.Println()
 	fmt.Print(">>  ")
 
 	for fmt.Scan(&Confirm); Confirm != "y"; fmt.Scan(&Confirm) {
-		fmt.Println("Incorret enter!!!")
+		fmt.Println("Неправильный ввод!!!")
 		fmt.Print(">>  ")
 	}
 	fmt.Println()
@@ -71,22 +71,22 @@ func lookListUser() {
 func addUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
-		fmt.Println("Error opening database:", err)
+		fmt.Println("Ошибка открытия базы данных:", err)
 		return
 	}
 	defer db.Close()
 
-	fmt.Println("Added new user:")
+	fmt.Println("Внесение в базу данных нового пользователя:")
 	fmt.Println()
-	fmt.Println("Enter name: ")
+	fmt.Println("Введите имя: ")
 	fmt.Print(">>  ")
 	fmt.Scan(&FirstName)
 	fmt.Println()
-	fmt.Println("Enter second name: ")
+	fmt.Println("Введите фамилию: ")
 	fmt.Print(">>  ")
 	fmt.Scan(&SecondName)
 	fmt.Println()
-	fmt.Println("Enter age: ")
+	fmt.Println("Введите возраст: ")
 	fmt.Print(">>  ")
 	fmt.Scan(&Age)
 	fmt.Println()
@@ -96,9 +96,9 @@ func addUser() {
 		fmt.Println(err)
 	}
 	time.Sleep(1 * time.Second)
-	fmt.Println("User added successfully!")
+	fmt.Println("Пользователь успешно добавлен в базу данных!")
 	fmt.Println()
-	fmt.Println("Add more user? Press 'y' and enter, or 'n' exit to main menu")
+	fmt.Println("Добавить еще пользователя? Нажмите 'y' и enter, или 'n' для выхода в главное меню")
 	fmt.Print(">>  ")
 
 	for {
@@ -109,15 +109,15 @@ func addUser() {
 			addUser()
 			break
 		} else if Confirm == "n" {
-			fmt.Println("Return to the main menu")
+			fmt.Println("Возврат в главное меню")
 			fmt.Println()
 			time.Sleep(1 * time.Second)
 			Menu()
 			break
 		} else {
-			fmt.Println("Incorret enter!!!")
+			fmt.Println("Неправильный ввод")
 			fmt.Println()
-			fmt.Println("Select 'y' or 'n' and press enter")
+			fmt.Println("Выбирете 'y' или 'n' и нажмите enter")
 			fmt.Println()
 			fmt.Print(">>  ")
 		}
@@ -127,19 +127,19 @@ func addUser() {
 func searchUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
-		fmt.Println("Error opening database:", err)
+		fmt.Println("Ошибка открытия базы данных:", err)
 		return
 	}
 	defer db.Close()
 
-	fmt.Println("The search is carried out by last name, enter at least 3 characters")
+	fmt.Println("Введите первые три буквы или полностью фамилию:")
 	fmt.Println()
 	fmt.Print(">>  ")
 	fmt.Scan(&SecondName)
 
 	for len(SecondName) < 3 {
 		fmt.Println()
-		fmt.Println("Last name must be at least 3 characters long, please retry enter:")
+		fmt.Println("Введено мнее трех символов, пожалуйста повторите ввод:")
 		fmt.Println()
 		fmt.Print(">>  ")
 		fmt.Scan(&SecondName)
@@ -159,7 +159,7 @@ func searchUser() {
 		var u Users
 		err = rows.Scan(&u.Id, &u.FirstName, &u.SecondName, &u.Age)
 		if err != nil {
-			fmt.Println("Error scanning row:", err)
+			fmt.Println("Ошибка сканирования базы данных:", err)
 			return
 		}
 		search = append(search, u) // not removed
@@ -172,11 +172,11 @@ func searchUser() {
 
 	if !found {
 		fmt.Println()
-		fmt.Println("No users found with the last name: ", SecondName)
+		fmt.Println("Данного пользователя не существует: ", SecondName)
 		fmt.Println()
 	}
 
-	fmt.Println("Search again? press 'y' and enter, or 'n' exit to main menu")
+	fmt.Println("Повторить поиск? Нажмите 'y' и  enter, или 'n' для перехода в главное меню")
 	fmt.Println()
 	fmt.Print(">>  ")
 
@@ -189,15 +189,15 @@ func searchUser() {
 			searchUser()
 			break
 		} else if Confirm == "n" {
-			fmt.Println("Return to the main menu")
+			fmt.Println("Возврат в главное меню")
 			fmt.Println()
 			time.Sleep(1 * time.Second)
 			Menu()
 			break
 		} else {
-			fmt.Println("Incorrect enter!!!")
+			fmt.Println("Некорректный ввод!!!")
 			fmt.Println()
-			fmt.Println("Select 'y' or 'n' and press enter")
+			fmt.Println("Выбирете 'y' или 'n' и нажмите enter")
 			fmt.Println()
 			fmt.Print(">>  ")
 		}
@@ -207,27 +207,27 @@ func searchUser() {
 func changeUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
-		fmt.Println("Error opening database:", err)
+		fmt.Println("Ошибка базы данных:", err)
 		return
 	}
 	defer db.Close()
 
-	fmt.Println("Your have change user")
+	fmt.Println("Вы хотите изменить данные пользователя")
 	time.Sleep(1 * time.Second)
 	fmt.Println()
 
-	fmt.Println("Select id user:")
+	fmt.Println("Выбирете id пользователя:")
 	fmt.Println()
 	fmt.Print(">>  ")
 	fmt.Scan(&Id)
 
-	fmt.Println("Enter name: ")
+	fmt.Println("Введите имя: ")
 	fmt.Print(">>  ")
 	fmt.Scan(&FirstName)
-	fmt.Println("Enter second name: ")
+	fmt.Println("Введите фамилию: ")
 	fmt.Print(">>  ")
 	fmt.Scan(&SecondName)
-	fmt.Println("Enter age: ")
+	fmt.Println("Введите возраст: ")
 	fmt.Print(">>  ")
 	fmt.Scan(&Age)
 
@@ -236,9 +236,9 @@ func changeUser() {
 		fmt.Println(err)
 	}
 
-	fmt.Println("User changed successfully!")
+	fmt.Println("Данные успешно изменены!")
 	fmt.Println()
-	fmt.Println("For return to the main menu press 'y' and enter")
+	fmt.Println("Для перехода в главное меню нажмите 'y' и enter")
 	fmt.Println()
 	fmt.Print(">>  ")
 
@@ -253,16 +253,16 @@ func changeUser() {
 func removeUser() {
 	db, err := sql.Open("sqlite", "DB.test.sqlite")
 	if err != nil {
-		fmt.Println("Error opening database:", err)
+		fmt.Println("Ошибка открытия базы данных:", err)
 		return
 	}
 	defer db.Close()
 
-	fmt.Println("Your have remove user")
+	fmt.Println("Вы хотите удалить пользователя")
 	time.Sleep(1 * time.Second)
 	fmt.Println()
 
-	fmt.Println("Select id user:")
+	fmt.Println("Выбирете ID пользователя:")
 	fmt.Println()
 	fmt.Print(">>  ")
 	fmt.Scan(&Id)
@@ -278,17 +278,17 @@ func removeUser() {
 	}
 
 	if rowsAffected == 0 {
-		fmt.Println("User with this ID not found")
+		fmt.Println("Пользователь с указанным ID не найден")
 	}
 
-	fmt.Println("User sucesfully remove!")
+	fmt.Println("Пользователь успешно удален!")
 	fmt.Println()
-	fmt.Println("For return to the main menu press 'y' and enter")
+	fmt.Println("Для возврата в главное меню нажмите 'y' и enter")
 	fmt.Println()
 	fmt.Print(">>  ")
 
 	for fmt.Scan(&Confirm); Confirm != "y"; fmt.Scan(&Confirm) {
-		fmt.Println("Incorrect enter!!!")
+		fmt.Println("Неправильный ввод!!!")
 		fmt.Print(">>  ")
 	}
 	fmt.Println()
@@ -296,12 +296,12 @@ func removeUser() {
 }
 
 func Menu() {
-	fmt.Println("1. Look users list")
-	fmt.Println("2. Add user")
-	fmt.Println("3. Search user")
-	fmt.Println("4. Change user")
-	fmt.Println("5. Remove user")
-	fmt.Println("6. Exit app")
+	fmt.Println("1. Посмотреть список пользователей")
+	fmt.Println("2. Добавить пользователя")
+	fmt.Println("3. Поиск пользователя")
+	fmt.Println("4. Изменить пользователя")
+	fmt.Println("5. Удалить пользователя")
+	fmt.Println("6. Выход из программы")
 	fmt.Println()
 	fmt.Print(">>  ")
 	fmt.Scan(&Num)
@@ -320,7 +320,7 @@ func Menu() {
 		removeUser()
 	case Num == 6:
 		time.Sleep(1 * time.Second)
-		fmt.Println("Exit app!!!")
+		fmt.Println("Выход из программы!!!")
 		fmt.Println()
 	}
 }
